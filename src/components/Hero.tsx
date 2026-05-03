@@ -1,37 +1,37 @@
 import React, { useEffect, useState } from "react";
 import OptionChainService from "../services/optionchainServices";
-import OptionChainFilters from "../components/OptionChainFilters";
-import OptionChainTable from "../components/OptionChainTable";
+import OptionChainFilters from "./OptionChainFilters";
+import OptionChainTable from "./OptionChainTable";
+import type { Filters, FilterType, OptionChainRow } from "../types/optionChain";
 
-const Hero = () => {
-    const [filters, setFilters] = useState({
+const Hero: React.FC = () => {
+    const [filters, setFilters] = useState<Filters>({
         type: "Indices",
         symbol: "NIFTY",
         expiry: "30-Apr-2026",
     });
 
-    const [expiryDates, setExpiryDates] = useState([]);
-    const [optionChain, setOptionChain] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [expiryDates, setExpiryDates] = useState<string[]>([]);
+    const [optionChain, setOptionChain] = useState<OptionChainRow[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const typeOptions = ["Indices", "Stocks"];
+    const typeOptions: FilterType[] = ["Indices", "Stocks"];
 
-    const symbolOptions = {
+    const symbolOptions: Record<FilterType, string[]> = {
         Indices: ["NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY"],
         Stocks: ["RELIANCE", "SBIN", "TCS", "INFY", "HDFCBANK"],
     };
 
-    const updateFilters = (key, value) => {
+    const updateFilters = (key: keyof Filters, value: string) => {
         setFilters((prev) => ({
             ...prev,
             [key]: value,
         }));
     };
 
-    const loadExpiryDates = async (updatedFilters) => {
+    const loadExpiryDates = async (updatedFilters: Filters) => {
         try {
             const dates = await OptionChainService.fetchExpiryDates(updatedFilters);
-
             setExpiryDates(dates || []);
 
             if (dates?.length) {
@@ -45,14 +45,10 @@ const Hero = () => {
         }
     };
 
-    const loadOptionChain = async (updatedFilters = filters) => {
+    const loadOptionChain = async (updatedFilters: Filters = filters) => {
         try {
             setLoading(true);
-
-            const data = await OptionChainService.fetchFormattedOptionChain(
-                updatedFilters
-            );
-
+            const data = await OptionChainService.fetchFormattedOptionChain(updatedFilters);
             setOptionChain(data || []);
         } catch (error) {
             console.error("Error loading option chain:", error);
@@ -61,8 +57,8 @@ const Hero = () => {
         }
     };
 
-    const handleTypeChange = (e) => {
-        const nextType = e.target.value;
+    const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const nextType = e.target.value as FilterType;
         const nextSymbol = symbolOptions[nextType][0];
 
         setFilters({
@@ -72,7 +68,7 @@ const Hero = () => {
         });
     };
 
-    const handleSymbolChange = (e) => {
+    const handleSymbolChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setFilters((prev) => ({
             ...prev,
             symbol: e.target.value,
@@ -80,7 +76,7 @@ const Hero = () => {
         }));
     };
 
-    const handleExpiryChange = (e) => {
+    const handleExpiryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         updateFilters("expiry", e.target.value);
     };
 
@@ -97,7 +93,6 @@ const Hero = () => {
     return (
         <div style={{ padding: "20px" }}>
             <h2>Option Chain Dashboard</h2>
-
             <OptionChainFilters
                 filters={filters}
                 expiryDates={expiryDates}
@@ -108,7 +103,6 @@ const Hero = () => {
                 onExpiryChange={handleExpiryChange}
                 onRefresh={() => loadOptionChain(filters)}
             />
-
             <OptionChainTable loading={loading} optionChain={optionChain} />
         </div>
     );

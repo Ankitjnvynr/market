@@ -1,6 +1,25 @@
 import React from "react";
 
-const OptionChainFilters = ({
+type FilterType = "Indices" | "Stocks";
+
+interface Filters {
+    type: FilterType;
+    symbol: string;
+    expiry: string;
+}
+
+interface Props {
+    filters: Filters;
+    expiryDates: string[];
+    typeOptions: FilterType[];
+    symbolOptions: Record<FilterType, string[]>;
+    onTypeChange: React.ChangeEventHandler<HTMLSelectElement>;
+    onSymbolChange: React.ChangeEventHandler<HTMLSelectElement>;
+    onExpiryChange: React.ChangeEventHandler<HTMLSelectElement>;
+    onRefresh: () => void;
+}
+
+const OptionChainFilters: React.FC<Props> = ({
     filters,
     expiryDates,
     typeOptions,
