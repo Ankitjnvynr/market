@@ -15,7 +15,7 @@ const OptionChainTable: React.FC<Props> = ({
     const [liveData, setLiveData] = useState<OptionChainRow[]>([]);
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-    const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const pollingRef = useRef<NodeJS.Timeout | null>(null);
     const fetchingRef = useRef(false);
 
     const loadData = async () => {
@@ -99,8 +99,8 @@ const OptionChainTable: React.FC<Props> = ({
 
         const reversalMap: Record<number, number> = {};
 
-        // round strikes near spot for reversal mapping
-        const roundRows = liveData.filter((r) => safe(r.strikePrice) % 100 === 0);
+        // strike levels near spot for reversal mapping (include 50-point strikes too)
+        const roundRows = liveData.filter((r) => safe(r.strikePrice) % 50 === 0);
         const nearbyRounds = roundRows.filter(
             (r) => Math.abs(safe(r.strikePrice) - spot) <= 300
         );
