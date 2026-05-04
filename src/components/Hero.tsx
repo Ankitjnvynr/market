@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import OptionChainService from "../services/optionchainServices";
 import OptionChainFilters from "./OptionChainFilters";
 import OptionChainTable from "./OptionChainTable";
@@ -57,6 +57,15 @@ const Hero: React.FC = () => {
         }
     };
 
+    const fetchOptionChain = useCallback(async () => {
+        try {
+            return await OptionChainService.fetchFormattedOptionChain(filters);
+        } catch (error) {
+            console.error("Error fetching option chain for auto-refresh:", error);
+            return [];
+        }
+    }, [filters]);
+
     const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const nextType = e.target.value as FilterType;
         const nextSymbol = symbolOptions[nextType][0];
@@ -103,7 +112,11 @@ const Hero: React.FC = () => {
                 onExpiryChange={handleExpiryChange}
                 onRefresh={() => loadOptionChain(filters)}
             />
-            <OptionChainTable loading={loading} optionChain={optionChain} />
+            <OptionChainTable
+                loading={loading}
+                optionChain={optionChain}
+                fetchOptionChain={fetchOptionChain}
+            />
         </div>
     );
 };
