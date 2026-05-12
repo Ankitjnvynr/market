@@ -1,17 +1,28 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  plugins: [react()],
+    plugins: [react()],
 
-  server: {
-    proxy: {
-      '/api/option-chain': {
-        target: 'https://www.nseindia.com',
-        changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/api\/option-chain/, '/api/option-chain-v3'),
-      },
+    server: {
+        proxy: {
+            // NSE
+            "/api/nse": {
+                target: "https://www.nseindia.com",
+                changeOrigin: true,
+                secure: true,
+                rewrite: (path) =>
+                    path.replace(/^\/api\/nse/, ""),
+            },
+
+            // MCX
+            "/api/mcx": {
+                target: "https://www.mcxindia.com",
+                changeOrigin: true,
+                secure: true,
+                rewrite: (path) =>
+                    path.replace(/^\/api\/mcx/, ""),
+            },
+        },
     },
-  },
-})
+});
