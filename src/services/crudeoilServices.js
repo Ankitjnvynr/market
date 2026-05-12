@@ -29,23 +29,38 @@ class CrudeOilServices {
     /**
      * Extract vTick JSON from HTML
      */
-    extractVTickData(html) {
-        try {
-            const vTickMatch = html.match(
-                /var\s+vTick\s*=\s*(\[.*?\]);/s
+extractVTickData(html) {
+    try {
+        console.log("HTML Response:", html);
+
+        if (!html || typeof html !== "string") {
+            throw new Error("Invalid HTML response");
+        }
+
+        // Flexible regex
+        const vTickMatch = html.match(
+            /vTick\s*=\s*(\[[\s\S]*?\]);/
+        );
+
+        if (!vTickMatch || !vTickMatch[1]) {
+            console.error(
+                "vTick not found in HTML:",
+                html.substring(0, 1000)
             );
 
-            if (!vTickMatch) {
-                throw new Error("vTick data not found");
-            }
-
-            return JSON.parse(vTickMatch[1]);
-        } catch (error) {
-            console.error("Error extracting vTick:", error);
-            throw error;
+            return [];
         }
-    }
 
+        return JSON.parse(vTickMatch[1]);
+    } catch (error) {
+        console.error(
+            "Error extracting vTick:",
+            error
+        );
+
+        return [];
+    }
+}
     /**
      * Get full MCX option chain ticker data
      */
