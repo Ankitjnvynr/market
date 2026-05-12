@@ -28,7 +28,7 @@ const CrudeOil = () => {
      *   2. response.Data    → service already stripped "d"
      *   3. response itself  → service returns array directly
      */
-    const unwrapRows = (response) => {
+    const unwrapRows = (response:any) => {
         const rows =
             response?.d?.Data ??
             response?.Data ??
@@ -49,7 +49,7 @@ const CrudeOil = () => {
         try {
             setLoading(true);
 
-            const expiries = await CrudeOilServices.getExpiriesArray("CRUDEOIL");
+            const expiries : any= await CrudeOilServices.getExpiriesArray("CRUDEOIL");
 
             setExpiryList(expiries);
 
@@ -69,7 +69,7 @@ const CrudeOil = () => {
     // ─────────────────────────────────────────────────────────────────────────
     // Load option chain data
     // ─────────────────────────────────────────────────────────────────────────
-    const loadOptionChainData = async (commodity, expiry) => {
+    const loadOptionChainData = async (commodity: string, expiry: string) => {
         try {
             if (!commodity || !expiry) return;
 
@@ -82,7 +82,7 @@ const CrudeOil = () => {
 
             console.log("MCX Option Chain Response:", response);
 
-            const rows = unwrapRows(response);
+            const rows: any = unwrapRows(response);
 
             console.log(`MCX rows: ${rows.length}, spot: ${rows[0]?.UnderlyingValue}`);
 
@@ -136,7 +136,7 @@ const CrudeOil = () => {
     // ─────────────────────────────────────────────────────────────────────────
     // Filter change handler
     // ─────────────────────────────────────────────────────────────────────────
-    const handleFilterChange = (updatedFilters) => {
+    const handleFilterChange = (updatedFilters:any) => {
         setFilters(updatedFilters);
     };
 
